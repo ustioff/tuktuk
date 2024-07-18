@@ -1,0 +1,4 @@
+name: took
+version: '${project.version}'
+main: me.usti.took.Took
+api-version: '1.20'

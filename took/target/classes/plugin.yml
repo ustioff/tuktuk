@@ -1,0 +1,4 @@
+name: took
+version: '1.0-SNAPSHOT'
+main: me.usti.took.Took
+api-version: '1.20'
