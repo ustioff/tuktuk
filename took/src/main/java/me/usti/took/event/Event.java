@@ -2,8 +2,11 @@ package me.usti.took.event;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -20,42 +23,34 @@ public class Event implements Listener {
 
         @EventHandler
         public void PlayerOnClickPlayer(PlayerInteractEntityEvent event) {
+                Player player = event.getPlayer();
                 ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
                 //проверка предмета в руке
-                Entity entity = event.getRightClicked();
-                if (event.getRightClicked().getType() == EntityType.PLAYER){
-                        if (hand.getType() == Material.AIR) {
-                                if (event.getPlayer().isSneaking()) {
-                                        event.setCancelled(true);
-                                        Player took = (Player) entity;
-                                        took.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.WHITE + "Вас отвлекает " + ChatColor.RED +  event.getPlayer().getName() ));
-                                }
+                if (event.getRightClicked() instanceof Player) {
+                        Player entity = (Player) event.getRightClicked(); // The entity you are knocking at.
+
+                        if (hand.getType().equals(Material.AIR) && player.isSneaking()) {
+                              entity.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.WHITE + "Вас отвлекает " + ChatColor.RED +  event.getPlayer().getName()));
                         }
                 }
         }
-
 
         @EventHandler
         public void PlayerOnClickDoor(PlayerInteractEvent event) {
-                ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
-                if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                        if (hand.getType() == Material.AIR) {
-                                if (event.getPlayer().isSneaking()) {
-                                        if (event.getClickedBlock().toString().contains("DOOR")) {
-                                                if (event.getPlayer().isOp() == true){
-                                                        event.getPlayer().chat("/playsound minecraft:entity.zombie.attack_wooden_door block @e[type=minecraft:player,distance=..12]");
-                                                }
-                                                else {
-                                                        event.setCancelled(true);
-                                                        event.getPlayer().setOp(true);
-                                                        event.getPlayer().chat("/playsound minecraft:entity.zombie.attack_wooden_door block @e[type=minecraft:player,distance=..12]");
-                                                        event.getPlayer().setOp(false);
-                                                }
-                                        }
-                                }
-                        }
-
+                Player player = event.getPlayer();
+                ItemStack hand = player.getInventory().getItemInMainHand();
+                Block clickedBlock = event.getClickedBlock();
+                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && clickedBlock != null) {
+                    if (player.isSneaking()
+                            && clickedBlock.toString().contains("DOOR")
+                            && hand.getType().equals(Material.AIR)) {
+                            player.getWorld().playSound(
+                                    player.getLocation(),
+                                    Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR,
+                                    2.0F,
+                                    1.0F
+                            );
+                    }
                 }
         }
 }
-
