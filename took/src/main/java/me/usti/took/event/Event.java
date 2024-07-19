@@ -31,6 +31,7 @@ public class Event implements Listener {
 
                         if (hand.getType().equals(Material.AIR) && player.isSneaking()) {
                               entity.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.WHITE + "Вас отвлекает " + ChatColor.RED +  event.getPlayer().getName()));
+                              event.setCancelled(true);
                         }
                 }
         }
@@ -50,6 +51,7 @@ public class Event implements Listener {
                                     2.0F,
                                     1.0F
                             );
+                            event.setCancelled(true);
                     }
                 }
         }
